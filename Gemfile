@@ -5,11 +5,23 @@ gem 'rails', '4.2.4'
 
 gem 'rails-api'
 
-gem 'spring', :group => :development
+gem 'spring', group: :development
+gem 'annotate', group: :development
+gem 'responders', '~> 2.0'
+gem 'geoutm'
+gem 'geokit-rails'
 
 
 gem 'sqlite3'
 
+gem 'apipie-rails'
+
+gem 'active_model_serializers'
+
+group :production do
+  gem 'pg'
+  gem 'rails_12factor'
+end
 
 
 # To use ActiveModel has_secure_password

@@ -1,0 +1,20 @@
+# == Schema Information
+#
+# Table name: devices
+#
+#  id         :integer          not null, primary key
+#  uuid       :text
+#  control_id :integer
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  uuid: MyText
+  control_id: 
+
+two:
+  uuid: MyText
+  control_id: 

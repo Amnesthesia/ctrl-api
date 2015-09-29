@@ -1,0 +1,23 @@
+# == Schema Information
+#
+# Table name: nodes
+#
+#  id         :integer          not null, primary key
+#  name       :string
+#  x          :decimal(, )
+#  y          :decimal(, )
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  x: 9.99
+  'y': 9.99
+
+two:
+  name: MyString
+  x: 9.99
+  'y': 9.99
