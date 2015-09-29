@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
   resources :nodes, only: [:index, :show], defaults: { format: :json } do
     collection do
-      get 'sync'
+      #get 'sync'
       match '(:metro)/near/:x/:y(.:format)', to: 'nodes#near', via: :get, constraints: {x: /\-*\d+.\d+/, y: /\-*\d+.\d+/}
       match '(:metro)/closest/:x/:y(.:format)', to: 'nodes#closest', via: :get, constraints: {x: /\-*\d+.\d+/, y: /\-*\d+.\d+/}
     end
