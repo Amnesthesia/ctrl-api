@@ -19,7 +19,16 @@ class ControlsController < ApplicationController
     current_location = Node.new(x: control_params[:x], y: control_params[:y])
 
     #most_probable_node = Node.within(0.2, origin: current_location).order('distance DESC')
-    most_probable_node = Node.closest(origin: current_location)
+    if control_params.has_key? "metro"
+      if control_params[:metro] =~ /metro/
+        most_probable_node = Node.where(metro: true).closest(origin: current_location)
+      else
+        most_probable_node = Node.where(metro: false).closest(origin: current_location)
+      end
+    else
+      most_probable_node = Node.closest(origin: current_location)
+    end
+
 
     @control.node = most_probable_node
 
@@ -38,7 +47,7 @@ class ControlsController < ApplicationController
   private
 
   def control_params
-    params.permit(:x, :y, :uuid, :active_state)
+    params.permit(:metro, :x, :y, :uuid, :active_state)
   end
 
 end

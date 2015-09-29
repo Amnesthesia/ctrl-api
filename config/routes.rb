@@ -12,7 +12,11 @@ Rails.application.routes.draw do
       match '(:metro)/closest/:x/:y(.:format)', to: 'nodes#closest', via: :get, constraints: {x: /\-*\d+.\d+/, y: /\-*\d+.\d+/}
     end
   end
-  resources :controls, defaults: { format: :json }, only: [:create]
+  resources :controls, defaults: { format: :json }, only: [:create] do
+    collection do
+      match '(:metro)', to: 'controls#create', via: :post
+    end
+  end
 
 
   # Example of regular route:
