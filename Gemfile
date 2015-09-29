@@ -12,7 +12,7 @@ gem 'geoutm'
 gem 'geokit-rails'
 
 
-gem 'sqlite3'
+gem 'sqlite3', group: :development
 
 gem 'apipie-rails'
 
