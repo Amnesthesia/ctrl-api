@@ -5,12 +5,14 @@ Rails.application.routes.draw do
   # You can have the root of your site routed with "root"
   # root 'welcome#index'
 
-  resources :nodes, only: [:index, :show], default: { format: 'json' } do
+  resources :nodes, only: [:index, :show], defaults: { format: :json } do
     collection do
       get 'sync'
+      match '(:metro)/near/:x/:y(.:format)', to: 'nodes#near', via: :get, constraints: {x: /\-*\d+.\d+/, y: /\-*\d+.\d+/}
+      match '(:metro)/closest/:x/:y(.:format)', to: 'nodes#closest', via: :get, constraints: {x: /\-*\d+.\d+/, y: /\-*\d+.\d+/}
     end
   end
-  resources :controls, default: { format: 'json' }, only: [:create]
+  resources :controls, defaults: { format: :json }, only: [:create]
 
 
   # Example of regular route:

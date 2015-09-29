@@ -12,13 +12,13 @@ class NodesController < ApplicationController
   def index
     @nodes = Node.all
 
-    respond_with @nodes
+    respond_with ActiveModel::ArraySerializer.new(@nodes, each_serializer: NodeSerializer)
   end
 
   # GET /nodes/1
   # GET /nodes/1.json
   def show
-    render json: @node
+    respond_with NodeSerializer.new(@node)
   end
 
   # POST /nodes
@@ -27,7 +27,7 @@ class NodesController < ApplicationController
     @node = Node.new(node_params)
 
     if @node.save
-      render json: @node, status: :created, location: @node
+      respond_with NodeSerializer.new(@node)
     else
       render json: @node.errors, status: :unprocessable_entity
     end
@@ -39,10 +39,15 @@ class NodesController < ApplicationController
     nodes = []
 
     stations.each do |station|
-      coords = GeoUtm::UTM.new "32V", station["X"], station["Y"]
+      coords = GeoUtm::UTM.new "32N", station["X"], station["Y"]
       coords = coords.to_lat_lon
 
-      n = Node.find_or_create_by(name: station["Name"])
+      if station["Name"] =~ /T-bane/
+        n = Node.find_or_create_by(name: station["Name"], metro: true)
+      else
+        n = Node.find_or_create_by(name: station["Name"], metro: false)
+      end
+
 
       n.y = coords.lon
       n.x = coords.lat
@@ -51,8 +56,45 @@ class NodesController < ApplicationController
       nodes << n
     end
 
-    respond_with nodes
+    respond_with ActiveModel::ArraySerializer.new(nodes, each_serializer: NodeSerializer)
 
+  end
+
+  def near
+    current_location = Node.new(x: node_params[:x], y: node_params[:y])
+
+    if node_params.has_key? "metro"
+      if node_params[:metro] =~ /metro/
+        nodes = Node.where(metro: true).within(5, origin: current_location)
+      else
+        nodes = Node.where(metro: false).within(5, origin: current_location)
+      end
+      else
+      nodes = Node.within(5, origin: current_location)
+    end
+
+
+    respond_with ActiveModel::ArraySerializer.new(nodes, each_serializer: NodeSerializer)
+  end
+
+  def closest
+    current_location = Node.new(x: node_params[:x], y: node_params[:y])
+
+    if node_params.has_key? "metro"
+      if node_params[:metro] =~ /metro/
+        most_probable_nodes = Node.where(metro: true).closest(origin: current_location)
+      else
+        most_probable_nodes = Node.where(metro: false).closest(origin: current_location)
+      end
+    else
+      most_probable_nodes = Node.closest(origin: current_location)
+    end
+
+    #most_probable_node = Node.within(0.2, origin: current_location).order('distance DESC')
+    #most_probable_nodes = Node.closest(origin: current_location)
+
+
+    respond_with ActiveModel::ArraySerializer.new(most_probable_nodes, each_serializer: NodeSerializer)
   end
 
   private
@@ -62,6 +104,6 @@ class NodesController < ApplicationController
     end
 
     def node_params
-      params[:node]
+      params.permit(:x, :y, :format, :metro)
     end
 end

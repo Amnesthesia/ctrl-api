@@ -29,13 +29,16 @@ class Node < ActiveRecord::Base
 
       override = false
 
-      if recent_clear_marks > recent_control_marks then
+      puts recent_clear_marks
+      puts recent_control_marks
+
+      if recent_clear_marks.count > recent_control_marks.count then
         if self.controls.order(:created_at).take(5).all is_active: true then
           override = true
         end
       end
 
-      first_notified = self.controls.where(is_active: ((recent_clear_marks.count > recent_control_marks.count) or override), created_at: DateTime.now-3.hours).order(asc: :created_at).first
+      first_notified = self.controls.where(is_active: ((recent_clear_marks.count > recent_control_marks.count) or override), created_at: DateTime.now-3.hours).order(created_at: :asc).first
 
 
 
@@ -43,8 +46,8 @@ class Node < ActiveRecord::Base
         recent_control: (recent_controls.count > 1),
         recent_clear_marks: recent_clear_marks.count,
         recent_control_marks: recent_control_marks.count,
-        verified: (recent_control_marks > 30 or recent_clear_marks > 30),
-        first_notified: first_notified.created_at
+        verified: (recent_control_marks.count > 30 or recent_clear_marks.count > 30),
+        first_notified: first_notified.nil? ? 0 : first_notified.created_at
       }
     else
       {
